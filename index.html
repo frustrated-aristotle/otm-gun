@@ -1,271 +1,289 @@
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>OTM Geçti Geldi</title>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-        <style>
-            html, body {
-                margin: 0;
-                padding: 0;
-                width: 100%;
-                height: 100%;
-                background-color: #2c2f33;
-                color: #dcdcdc;
-                font-family: 'Arial', sans-serif;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                position: relative;
-                flex-direction: column;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OTM Geçti Geldi</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #2c2f33;
+            color: #dcdcdc;
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            align-items: flex-start;
+            justify-content: flex-start;
+            position: relative;
+            flex-direction: column;
+            overflow-y: auto; /* Sayfa kaydırılabilir hale getirilir */
+        }
+
+        /* Yağmur Efekti */
+        .rain {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .drop {
+            position: absolute;
+            width: 2px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.8);
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(-100vh);
             }
-    
-            /* Yağmur Efekti */
-            .rain {
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                pointer-events: none;
-                z-index: -1;
+            100% {
+                transform: translateY(100vh);
             }
-    
-            .drop {
-                position: absolute;
-                width: 2px;
-                height: 20px;
-                background: rgba(255, 255, 255, 0.8);
-                animation: fall linear infinite;
-            }
-    
-            @keyframes fall {
-                0% {
-                    transform: translateY(-100vh);
-                }
-                100% {
-                    transform: translateY(100vh);
-                }
-            }
-    
-            /* Container ve İçerik */
-            .container {
-                text-align: center;
-                border: 2px solid #4a4e57;
-                border-radius: 15px;
-                padding: 40px;
-                background-color: #36393f;
-                max-width: 600px;
-                margin-bottom: 20px;
-            }
-    
-            h1 {
-                font-size: 2.5rem;
-                margin-bottom: 20px;
-                color: #ff6b6b;
-            }
-    
-            h2 {
-                font-size: 1.5rem;
-                color: #f4cfcf;
-            }
-    
-            .days-ago {
-                font-size: 4rem;
-                color: #ff6b6b;
-                font-weight: bold;
-            }
-    
-            footer h3 {
-                margin-top: 20px;
-                font-size: 1rem;
-                color: #a1a1a1;
-            }
-    
-            /* Yorum Kısmı */
-            .comment-section {
-                margin-top: 30px;
-            }
-    
-            #make-comment, #comments-section {
-                margin-top: 30px;
-                padding: 15px;
-                background-color: #404349;
-                border-radius: 10px;
-                border: 1px solid #4a4e57;
-                max-width: 600px;
-                margin-left: auto;
-                margin-right: auto;
-            }
-    
-            #make-comment h4, #comments-section h5 {
-                color: #f4cfcf;
-                margin-bottom: 15px;
-            }
-    
-            .comment-box, .rumuz-input {
-                width: 100%;
-                height: 40px;
-                padding: 10px;
-                border-radius: 8px;
-                border: 1px solid #4a4e57;
-                background-color: #404349;
-                color: #fff;
-                font-size: 1rem;
-            }
-    
-            .comment-box {
-                height: 100px;
-            }
-    
-            .comment-btn {
-                background-color: #0a1034;
-                color: white;
-                border: 1px solid #4a4e57;
-                padding: 10px 20px;
-                border-radius: 8px;
-                margin-top: 10px;
-                cursor: pointer;
-                font-size: 1rem;
-            }
-    
-            .comment-btn:hover {
-                background-color: #095f59;
-            }
-    
-            /* Yapılmış Yorumlar */
-            .comment-item {
-                background-color: #505555;
-                border-radius: 8px;
-                padding: 10px;
-                margin-bottom: 10px;
-                color: #fff;
-                text-align: left;
-            }
-    
-            .comment-item p {
-                margin: 0;
-                padding: 0;
-            }
-    
-            .comment-item .nickname {
-                font-weight: bold;
-                color: #ff6b6b;
-            }
-    
-        </style>
-    </head>
-    <body>
-    
-    <!-- Yağmur Efekti -->
-    <div class="rain" id="rain"></div>
-    
-    <!-- Gün Kısmı (Alt Alta) -->
-    <div class="container">
-        <h1>O Tarz Mı</h1>
-        <h2>Son bölümü üzerinden</h2>
-        <div class="days-ago" id="daysAgo">0</div>
-        <h3>gün geçti.</h3>
-    </div>
-    
-    <!-- Yorum Yapma Alanı (Alt Alta) -->
-    <div class="container" id="make-comment">
-        <h4>Yorum Yap</h4>
-        <input type="text" class="rumuz-input mb-3" id="nicknameInput" placeholder="Rumuz Giriniz">
-        <textarea class="comment-box mb-3" id="commentBox" minlength="5" placeholder="Yorumunuzu buraya yazınız..."></textarea>
-        <button class="comment-btn" id="submitComment">Kaydet</button>
-    </div>
-    
-    <!-- Yapılmış Yorumlar (Alt Alta) -->
-    <div class="container" id="comments-section">
-        <h5>Yapılmış Yorumlar</h5>
-    </div>
-    
-    <!-- Firebase SDK -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
-        import { getFirestore, collection, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
-    
-        // Firebase Config
-        const firebaseConfig = {
-            apiKey: "AIzaSyBJay_EqXFB6XLHrPyH09tGnwGhFHRZRt0",
-            authDomain: "otm-gun.firebaseapp.com",
-            projectId: "otm-gun",
-            storageBucket: "otm-gun.firebasestorage.app",
-            messagingSenderId: "557331819126",
-            appId: "1:557331819126:web:d1e199e2d0a7b0e3004d57"
-        };
-    
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-    
-        // OTM'nin son bölümünün tarihi
-        const lastEpisodeDate = new Date("2023-06-22");
-        const today = new Date();
-    
-        // Farkı gün cinsinden hesapla
-        const timeDifference = today - lastEpisodeDate;
-        const daysAgo = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
-    
-        // HTML'e yazdır
-        document.getElementById('daysAgo').innerText = daysAgo;
-    
-    
-        // Yağmur damlası oluşturma fonksiyonunu sürekli çalıştır
-    
-        // Yorumları saklamak ve eklemek için fonksiyonlar
-        const commentsCollection = collection(db, "comments");
-    
-        // Yorumları ekrana yazdıran fonksiyon
-        async function displayComments() {
-            const querySnapshot = await getDocs(commentsCollection);
-            const commentsSection = document.getElementById('comments-section');
-            commentsSection.innerHTML = '<h5>Yapılmış Yorumlar</h5>'; // Başlığı tekrar ekleyelim
-    
-            querySnapshot.forEach((doc) => {
-                const commentData = doc.data();
-                const commentItem = document.createElement('div');
-                commentItem.classList.add('comment-item');
-                commentItem.innerHTML = `
+        }
+
+        .container {
+            text-align: center;
+            border: 2px solid #4a4e57;
+            border-radius: 15px;
+            padding: 40px;
+            background-color: #36393f;
+            max-width: 600px;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: #ff6b6b;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            color: #f4cfcf;
+        }
+
+        .days-ago {
+            font-size: 4rem;
+            color: #ff6b6b;
+            font-weight: bold;
+        }
+
+        footer h3 {
+            margin-top: 20px;
+            font-size: 1rem;
+            color: #a1a1a1;
+        }
+
+        /* Yorum Kısmı */
+        .comment-section {
+            margin-top: 30px;
+        }
+
+        #make-comment, #comments-section {
+            margin-top: 30px;
+            padding: 15px;
+            background-color: #404349;
+            border-radius: 10px;
+            border: 1px solid #4a4e57;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        #make-comment h4, #comments-section h5 {
+            color: #f4cfcf;
+            margin-bottom: 15px;
+        }
+
+        .comment-box, .rumuz-input {
+            width: 100%;
+            height: 40px;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #4a4e57;
+            background-color: #404349;
+            color: #fff;
+            font-size: 1rem;
+        }
+
+        .comment-box {
+            height: 100px;
+        }
+
+        .comment-btn {
+            background-color: #0a1034;
+            color: white;
+            border: 1px solid #4a4e57;
+            padding: 10px 20px;
+            border-radius: 8px;
+            margin-top: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .comment-btn:hover {
+            background-color: #095f59;
+        }
+
+        /* Yapılmış Yorumlar */
+        .comment-item {
+            background-color: #505555;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 10px;
+            color: #fff;
+            text-align: left;
+        }
+
+        .comment-item p {
+            margin: 0;
+            padding: 0;
+        }
+
+        .comment-item .nickname {
+            font-weight: bold;
+            color: #ff6b6b;
+        }
+        #comments-section {
+            margin-top: 30px;
+            padding: 15px;
+            background-color: #404349;
+            border-radius: 10px;
+            border: 1px solid #4a4e57;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .comment-item {
+            background-color: #505555;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 10px;
+            color: #fff;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Yağmur Efekti -->
+<div class="rain" id="rain"></div>
+<br>
+<!-- Gün Kısmı (Alt Alta) -->
+<div class="container">
+    <h1>O Tarz Mı</h1>
+    <h2>Son bölümü üzerinden</h2>
+    <div class="days-ago" id="daysAgo">0</div>
+    <h3>gün geçti.</h3>
+</div>
+
+<!-- Yorum Yapma Alanı (Alt Alta) -->
+<div class="container" id="make-comment">
+    <h4>Yorum Yap</h4>
+    <input type="text" class="rumuz-input mb-3" id="nicknameInput" placeholder="Rumuz Giriniz">
+    <textarea class="comment-box mb-3" id="commentBox" minlength="5" placeholder="Yorumunuzu buraya yazınız..."></textarea>
+    <button class="comment-btn" id="submitComment">Kaydet</button>
+</div>
+
+<!-- Yapılmış Yorumlar (Alt Alta) -->
+<div class="container" id="comments-section">
+    <h5>Yapılmış Yorumlar</h5>
+</div>
+
+<!-- Firebase SDK -->
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+    import { getFirestore, collection, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+
+    // Firebase Config
+    const firebaseConfig = {
+        apiKey: "AIzaSyBJay_EqXFB6XLHrPyH09tGnwGhFHRZRt0",
+        authDomain: "otm-gun.firebaseapp.com",
+        projectId: "otm-gun",
+        storageBucket: "otm-gun.firebasestorage.app",
+        messagingSenderId: "557331819126",
+        appId: "1:557331819126:web:d1e199e2d0a7b0e3004d57"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // OTM'nin son bölümünün tarihi
+    const lastEpisodeDate = new Date("2023-06-22");
+    const today = new Date();
+
+    // Farkı gün cinsinden hesapla
+    const timeDifference = today - lastEpisodeDate;
+    const daysAgo = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+
+    // HTML'e yazdır
+    document.getElementById('daysAgo').innerText = daysAgo;
+
+
+    // Yağmur damlası oluşturma fonksiyonunu sürekli çalıştır
+
+    // Yorumları saklamak ve eklemek için fonksiyonlar
+    const commentsCollection = collection(db, "comments");
+
+    // Yorumları ekrana yazdıran fonksiyon
+    async function displayComments() {
+        const querySnapshot = await getDocs(commentsCollection);
+        const commentsSection = document.getElementById('comments-section');
+        commentsSection.innerHTML = '<h5>Yapılmış Yorumlar</h5>'; // Başlığı tekrar ekleyelim
+
+        querySnapshot.forEach((doc) => {
+            const commentData = doc.data();
+            const commentItem = document.createElement('div');
+            commentItem.classList.add('comment-item');
+            commentItem.innerHTML = `
                     <p><span class="nickname">${commentData.nickname}:</span> ${commentData.comment}</p>
                 `;
-                commentsSection.appendChild(commentItem);
-            });
-        }
-    
-        // Yorum ekleme işlevi
-        document.getElementById('submitComment').addEventListener('click', async () => {
-            const nickname = document.getElementById('nicknameInput').value;
-            const commentText = document.getElementById('commentBox').value;
-    
-            if (nickname && commentText.length >= 5) {
-                try {
-                    // Firebase'e yeni yorum ekle
-                    await addDoc(commentsCollection, {
-                        nickname: nickname,
-                        comment: commentText,
-                        timestamp: new Date()
-                    });
-    
-                    // Yorumları tekrar yükle
-                    displayComments();
-    
-                    // Formu temizle
-                    document.getElementById('nicknameInput').value = '';
-                    document.getElementById('commentBox').value = '';
-                } catch (error) {
-                    console.error("Yorum eklenirken hata oluştu:", error);
-                }
-            } else {
-                alert("Lütfen geçerli bir rumuz ve yorum giriniz.");
-            }
+            commentsSection.appendChild(commentItem);
         });
-    
-        // Sayfa yüklendiğinde mevcut yorumları getir
-        displayComments();
-    </script>
-    
-    </body>
-    </html>
+    }
+
+    // Yorum ekleme işlevi
+    document.getElementById('submitComment').addEventListener('click', async () => {
+        const nickname = document.getElementById('nicknameInput').value;
+        const commentText = document.getElementById('commentBox').value;
+
+        if (nickname && commentText.length >= 5) {
+            try {
+                // Firebase'e yeni yorum ekle
+                await addDoc(commentsCollection, {
+                    nickname: nickname,
+                    comment: commentText,
+                    timestamp: new Date()
+                });
+
+                // Yorumları tekrar yükle
+                displayComments();
+
+                // Formu temizle
+                document.getElementById('nicknameInput').value = '';
+                document.getElementById('commentBox').value = '';
+            } catch (error) {
+                console.error("Yorum eklenirken hata oluştu:", error);
+            }
+        } else {
+            alert("Lütfen geçerli bir rumuz ve yorum giriniz.");
+        }
+    });
+
+    // Sayfa yüklendiğinde mevcut yorumları getir
+    displayComments();
+</script>
+
+</body>
+</html>
